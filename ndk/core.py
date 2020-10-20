@@ -31,7 +31,7 @@ class Stack:
         Args:
             obj (NagiosObject): The base class of Nagios.
         """
-        if obj.pk in self.objects[obj.type]:
+        if obj.pk in self.objects[obj.__object_type__]:
             raise exceptions.DuplicateError(
-                f'{obj.pk} already exist in {obj.type} objects')
-        self.objects[obj.type][obj.pk] = obj
+                f'{obj.pk} already exist in {obj.__object_type__} objects')
+        self.objects[obj.__object_type__][obj.pk] = obj
