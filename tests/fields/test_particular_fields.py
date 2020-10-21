@@ -10,7 +10,7 @@ class Ipv4FieldTestCase(unittest.TestCase):
     def test_Ipv4Field_is_works(self):
         f = fields.Ipv4Field()
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 
@@ -36,7 +36,7 @@ class Options:
 class ChoiceFieldTestCase(unittest.TestCase):
 
     def test_ChoiceField_is_works(self):
-        # `.choices` is requried
+        # `.choices` is required
         with self.assertRaises(exceptions.IntegrityError):
             fields.ChoiceField()
 
@@ -45,7 +45,7 @@ class ChoiceFieldTestCase(unittest.TestCase):
 
         f = fields.ChoiceField(choices=EnumOptions)
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 

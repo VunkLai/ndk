@@ -9,7 +9,7 @@ class FieldTestCase(unittest.TestCase):
     def test_Field_is_works(self):
         f = fields.Field()
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 
@@ -29,7 +29,7 @@ class StringFieldTestCase(unittest.TestCase):
     def test_StringField_is_works(self):
         f = fields.StringField()
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 
@@ -47,7 +47,7 @@ class IntegerFieldTestCase(unittest.TestCase):
     def test_IntegerField_is_works(self):
         f = fields.IntegerField()
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 
@@ -69,7 +69,7 @@ class BooleanFieldTestCase(unittest.TestCase):
     def test_BooleanField_is_works(self):
         f = fields.BooleanField()
         assert f.primary_key == False
-        assert f.requried == False
+        assert f.required == False
         assert f.composite_key == False
         assert f.default == None
 

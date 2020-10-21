@@ -10,7 +10,7 @@ from ndk.exceptions import IntegrityError
 class Field:
     primary_key: bool = False
     composite_key: bool = False
-    requried: bool = False
+    required: bool = False
     default: str = None
     field_type: type = None
 
@@ -61,7 +61,7 @@ class ChoiceField(Field):
         if self.primary_key:
             raise IntegrityError('ChoiceField can not be a Primary Key')
         if not self.choices:
-            raise IntegrityError('`.choices` is requried in ChoiceField')
+            raise IntegrityError('`.choices` is required in ChoiceField')
         if not issubclass(self.choices, Enum):
             raise IntegrityError('`.choices` must be Enum instance')
         super().__post_init__()
