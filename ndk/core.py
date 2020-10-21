@@ -113,3 +113,9 @@ class Object(dict, metaclass=ObjectMeta):
     def pk(self):
         pks = (Field.normalize_name(self[key]) for key in self.__primary_key__)
         return "::".join(pks)
+
+    def is_valud(self):
+        for key, field in self.__mappings__.items():
+            if field.required and not any([self.get(key), field.default]):
+                raise IntegrityError(
+                    f'{key} field is required in {self.__class__.__qualname__}')

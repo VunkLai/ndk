@@ -54,3 +54,22 @@ class NagiosTestCase(unittest.TestCase):
 
         host = ObjectWithTwoPKs(stack, host_name='Foo Bar', alias='BAZ')
         assert host.pk == 'foo-bar::baz'
+
+    def test_required_is_works_in_object(self):
+        class Host(core.Object):
+            class Meta:
+                object_type = 'asdf'
+
+            host_name = fields.StringField(required=True, primary_key=True)
+            address = fields.Ipv4Field(required=True)
+
+        stack = core.Stack('FieldTesting')
+        with self.assertRaises(exceptions.IntegrityError):
+            host = Host(stack, host_name='foo')
+            host.is_valud()
+
+        host = Host(stack, host_name='bar', address='127.0.0.1')
+        host.is_valud()
+
+        # host = Host(stack, host_name='foo')
+        # assert host.host_name == 'foo'
