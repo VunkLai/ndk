@@ -1,7 +1,6 @@
 from collections import defaultdict
 
-from ndk import exceptions
-from ndk.exceptions import IntegrityError
+from ndk.exceptions import DuplicateError, IntegrityError
 from ndk.fields import Field
 
 
@@ -34,7 +33,7 @@ class Stack:
             obj (NagiosObject): The base class of Nagios.
         """
         if obj.pk in self.objects[obj.__object_type__]:
-            raise exceptions.DuplicateError(
+            raise DuplicateError(
                 f'{obj.pk} already exist in {obj.__object_type__} objects')
         self.objects[obj.__object_type__][obj.pk] = obj
 
