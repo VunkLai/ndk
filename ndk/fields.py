@@ -1,7 +1,8 @@
+import importlib
 from dataclasses import dataclass, field
 from enum import Enum
 from ipaddress import IPv4Address
-from typing import List
+from typing import Any, List
 
 from ndk.exceptions import IntegrityError
 
@@ -74,3 +75,22 @@ class ChoiceField(Field):
             items = (x.value for x in value if isinstance(x, self.choices))
             return ','.join(items)
         return value
+
+
+@dataclass
+class ForeignKey(Field):
+    field_type: type = str
+    relation: str = None
+
+    def __post_init__(self):
+        if not self.relation:
+            raise IntegrityError('.relation is requried field in ForeignKey')
+        super().__post_init__()
+
+    def serializer(self, obj):
+        module = importlib.import_module('objects', package='ndk')
+        relation = getattr(module, self.relation)
+        if not isinstance(obj, relation):
+            raise IntegrityError(
+                f'{obj} object must be a {relation} instance.')
+        return self.field_type(obj)
