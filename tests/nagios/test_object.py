@@ -35,3 +35,22 @@ class NagiosTestCase(unittest.TestCase):
         assert not GoodObject.__composite_key__
         stack = core.Stack('ObjectTesting')
         host = GoodObject(stack, host_name='foo')
+
+    def test_if_pk_has_certain_format(self):
+        class ObjectWithOenPK(core.Object):
+            class Meta:
+                object_type = 'foo'
+            host_name = fields.StringField(primary_key=True)
+
+        class ObjectWithTwoPKs(core.Object):
+            class Meta:
+                object_type = 'foo'
+            host_name = fields.StringField(primary_key=True)
+            alias = fields.StringField(primary_key=True)
+
+        stack = core.Stack('ObjectTesting')
+        host = ObjectWithOenPK(stack, host_name='Foo Bar')
+        assert host.pk == 'foo-bar'
+
+        host = ObjectWithTwoPKs(stack, host_name='Foo Bar', alias='BAZ')
+        assert host.pk == 'foo-bar::baz'
