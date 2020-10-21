@@ -52,7 +52,7 @@ class ObjectMeta(type):
         object_attr = {}
         for parent in parents:
             if hasattr(parent, '__object_type__'):
-                object_type = parents.__object_type__
+                object_type = parent.__object_type__
             if hasattr(parent, '__mappings__'):
                 object_attr.update(**parent.__mappings__)
 
