@@ -24,7 +24,7 @@ class FieldTestCase(unittest.TestCase):
         assert isinstance(int_defualt.default, int)
 
 
-class StringField(unittest.TestCase):
+class StringFieldTestCase(unittest.TestCase):
 
     def test_StringField_is_works(self):
         f = fields.StringField()
@@ -42,20 +42,44 @@ class StringField(unittest.TestCase):
         assert '1234' == int_default.default
 
 
-class Ipv4Field(unittest.TestCase):
+class IntegerFieldTestCase(unittest.TestCase):
 
-    def test_Ipv4Field_is_works(self):
-        f = fields.Ipv4Field()
+    def test_IntegerField_is_works(self):
+        f = fields.IntegerField()
         assert f.primary_key == False
         assert f.requried == False
         assert f.composite_key == False
         assert f.default == None
 
-    def test_type_conversion_of_default_in_Ipv4Field(self):
-        with self.assertRaises(ipaddress.AddressValueError):
-            fields.Ipv4Field(default='foo')
+    def test_type_conversion_of_default_in_IntegerField(self):
+        with self.assertRaises(ValueError):
+            fields.IntegerField(default='foo')
 
-        f = fields.Ipv4Field(default='127.0.0.1')
-        assert isinstance(f.default, ipaddress.IPv4Address)
-        assert '127.0.0.1' == str(f.default)
-        assert 2130706433 == int(f.default)
+        f = fields.IntegerField(default='1234')
+        assert isinstance(f.default, int)
+        assert 1234 == f.default
+
+        f = fields.IntegerField(default=1234)
+        assert isinstance(f.default, int)
+        assert 1234 == f.default
+
+
+class BooleanFieldTestCase(unittest.TestCase):
+
+    def test_BooleanField_is_works(self):
+        f = fields.BooleanField()
+        assert f.primary_key == False
+        assert f.requried == False
+        assert f.composite_key == False
+        assert f.default == None
+
+    def test_type_conversion_of_default_in_BooleanField(self):
+        # Nagios Object use [0/1] to represent the Boolean value
+        f = fields.BooleanField(default=True)
+        assert isinstance(f.default, int)
+
+        f = fields.BooleanField(default=True)
+        assert f.default
+
+        f = fields.BooleanField(default=0)
+        assert not f.default
