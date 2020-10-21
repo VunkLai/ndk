@@ -96,7 +96,7 @@ class Object(dict, metaclass=ObjectMeta):
     """A base class of Nagios Object."""
 
     def __init__(self, stack, *args, **kwargs):
-        super().__init__(stack, *args, **kwargs)
+        super().__init__(*args, **kwargs)
         assert isinstance(stack, Stack), f'Stack is invalid: {stack}'
         for key, val in kwargs.items():
             setattr(self, key, val)
