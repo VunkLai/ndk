@@ -207,7 +207,7 @@ class Host(HostConstruct):
 
     def __init__(
             self, stack, host_name, address, notification_period,
-            check_command, max_check_attempts=5, check_period=3,
+            check_command, check_period, max_check_attempts=5,
             notification_interval=60, alias=None, check_interval=None,
             retry_interval=None, active_checks_enabled=True,
             passive_checks_enabled=False, event_handler=None,

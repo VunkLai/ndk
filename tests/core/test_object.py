@@ -1,7 +1,7 @@
 import unittest
 
 # from . import models
-from ndk import core, exceptions, fields
+from ndk import core, exceptions, fields, objects
 
 
 class NagiosTestCase(unittest.TestCase):
@@ -66,10 +66,26 @@ class NagiosTestCase(unittest.TestCase):
         stack = core.Stack('FieldTesting')
         with self.assertRaises(exceptions.IntegrityError):
             host = Host(stack, host_name='foo')
-            host.is_valud()
+            host.is_valid()
 
         host = Host(stack, host_name='bar', address='127.0.0.1')
-        host.is_valud()
+        host.is_valid()
 
-        # host = Host(stack, host_name='foo')
-        # assert host.host_name == 'foo'
+    def test_synth_is_works(self):
+        stack = core.Stack('ObjectTesting')
+        _7x24 = objects.TwentyFourSeven(stack)
+        cmd = objects.command.Ping(stack)
+        host = objects.Host(
+            stack, host_name='foo', address='127.0.0.1',
+            check_period=_7x24,
+            notification_period=_7x24,
+            check_command=cmd)
+
+        define = '\n'.join((
+            'define command {',
+            '    command_name    check-host-alive',
+            '    command_line    $USER1$/check_ping -H $HOSTADDRESS$ -w 30.0,80% -c 50.0,100%',
+            '}'
+        ))
+        assert define == cmd.synth()
+        assert define in stack.synth()

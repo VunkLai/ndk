@@ -37,6 +37,10 @@ class Stack:
                 f'{obj.pk} already exist in {obj.__object_type__} objects')
         self.objects[obj.__object_type__][obj.pk] = obj
 
+    def synth(self):
+        """Synthesizes the Nagios objects for this stack"""
+        return '\n'.join((obj.synth() for obj in self))
+
 
 class ObjectMeta(type):
     """A metacalss for Nagios Object."""
@@ -113,8 +117,21 @@ class Object(dict, metaclass=ObjectMeta):
         pks = (Field.normalize_name(self[key]) for key in self.__primary_key__)
         return "::".join(pks)
 
-    def is_valud(self):
+    def is_valid(self):
         for key, field in self.__mappings__.items():
             if field.required and not any([self.get(key), field.default]):
                 raise IntegrityError(
                     f'{key} field is required in {self.__class__.__qualname__}')
+
+    def render(self):
+        self.is_valid()
+        yield 'define %s {' % self.__object_type__
+        for name, field in self.__mappings__.items():
+            directives_value = self.get(name, None) or field.default
+            if directives_value is not None:
+                yield f'    {name}    {field.serializer(directives_value)}'
+        yield '}'
+
+    def synth(self):
+        """Synthesizes the Nagios objects self"""
+        return '\n'.join(self.render())

@@ -23,6 +23,7 @@ class HostTestCase(unittest.TestCase):
         _24x7 = objects.TwentyFourSeven(stack)
         cmd = objects.command.Ping(stack)  # fake cmd
         host = Host(stack, host_name='foo', address='localhost',
-                    notification_period=_24x7, check_command=cmd)
+                    notification_period=_24x7, check_period=_24x7,
+                    check_command=cmd)
         assert host.max_check_attempts == 5
         assert host.address == 'localhost'

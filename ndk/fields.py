@@ -88,7 +88,7 @@ class ForeignKey(Field):
         super().__post_init__()
 
     def serializer(self, obj):
-        module = importlib.import_module('objects', package='ndk')
+        module = importlib.import_module('.objects', package='ndk')
         relation = getattr(module, self.relation)
         if not isinstance(obj, relation):
             raise IntegrityError(
