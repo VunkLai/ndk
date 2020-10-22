@@ -13,8 +13,7 @@ class ChoiceMixin:
 
     @classmethod
     def all(cls):
-        items = (member.value for member in cls.choices())
-        return list(items)
+        return list(cls.choices())
 
     @classmethod
     def empty(cls):

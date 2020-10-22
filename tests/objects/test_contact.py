@@ -17,8 +17,8 @@ class ContactTestCase(unittest.TestCase):
             service_notifications_enabled=True,
             host_notifications_period=_24x7,
             service_notifications_period=_24x7,
-            host_notifications_options=HostNotifications.all(),
-            service_notifications_options=ServiceNotifications.all(),
+            host_notifications_options=HostNotifications.choices(),
+            service_notifications_options=ServiceNotifications.choices(),
             host_notification_commands=cmd,
             service_notification_commands=cmd)
         assert contact.contact_name == 'foo'
@@ -30,7 +30,7 @@ class ContactTestCase(unittest.TestCase):
             host_notification_commands=cmd,
             service_notification_commands=cmd)
         assert contact.host_notifications_enabled == True
-        assert contact.host_notifications_options == ['d', 'u', 'r', 'f', 's']
+        assert 'host_notifications_options    d,u,r,f,s' in contact.synth()
 
     def test_L3_construct_is_works(self):
         stack = core.Stack('ContactTesting')
@@ -43,5 +43,5 @@ class ContactTestCase(unittest.TestCase):
             host_notification_commands=cmd,
             service_notification_commands=cmd)
         assert contact.host_notifications_enabled == True
-        assert contact.host_notifications_options == ['d', 'u', 'r', 'f', 's']
+        assert 'host_notifications_options    d,u,r,f,s' in contact.synth()
         assert contact.email == 'foo@bar.baz'

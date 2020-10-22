@@ -89,4 +89,5 @@ class NagiosTestCase(unittest.TestCase):
         ))
         assert define == cmd.synth()
         assert 'check_period    tp-24x7' in host.synth()
+        assert 'notification_options    d,u,r,f,s' in host.synth()
         assert define in stack.synth()

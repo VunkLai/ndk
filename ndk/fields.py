@@ -69,11 +69,9 @@ class ChoiceField(Field):
 
     def serializer(self, value):
         if value:
-            # item must be a instance of self.choices
             if not isinstance(value, list):
                 value = [value]
-            items = (x.value for x in value if isinstance(x, self.choices))
-            return ','.join(items)
+            return ','.join((x.value for x in value))
         return value
 
 
