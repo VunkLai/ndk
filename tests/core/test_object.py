@@ -73,7 +73,7 @@ class NagiosTestCase(unittest.TestCase):
 
     def test_synth_is_works(self):
         stack = core.Stack('ObjectTesting')
-        _7x24 = objects.TwentyFourSeven(stack)
+        _7x24 = objects.TwentyFourSeven(stack, 'tp-24x7')
         cmd = objects.command.Ping(stack)
         host = objects.Host(
             stack, host_name='foo', address='127.0.0.1',
@@ -88,4 +88,5 @@ class NagiosTestCase(unittest.TestCase):
             '}'
         ))
         assert define == cmd.synth()
+        assert 'check_period    tp-24x7' in host.synth()
         assert define in stack.synth()

@@ -112,6 +112,9 @@ class Object(dict, metaclass=ObjectMeta):
         assert key in self.__mappings__, f'Field name is invalid: {key}'
         self[key] = value
 
+    def __str__(self):
+        return self.pk
+
     @property
     def pk(self):
         pks = (Field.normalize_name(self[key]) for key in self.__primary_key__)
