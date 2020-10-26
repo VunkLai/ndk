@@ -39,14 +39,3 @@ class Construct(object):
             if value is not None:
                 yield f'    {name}    {value}'
         yield self.suffix
-
-
-@attr.s
-class TimePeriodConstruct(Construct):
-    __object_type__ = 'timeperiod'
-    timeperiod_name = attr.ib(type=str, converter=str)
-    alias = attr.ib(type=str)
-
-    @property
-    def pk(self):
-        return self.timeperiod_name
