@@ -30,12 +30,25 @@ class Construct(object):
     def synth(self):
         return "\n".join(self.__iter__())
 
+    @classmethod
+    def converter(cls, obj):
+        if obj is None:
+            return None
+        elif isinstance(obj, cls):
+            return obj
+        else:
+            cls(obj)
+
     def __iter__(self):
         yield self.prefix
         # self.__dict__ has only attributes that created by attr.ib()
         for name, value in self.__dict__.items():
-            if name == 'stack':
+            if name == 'stack' or value is None:
                 continue
-            if value is not None:
-                yield f'    {name}    {value}'
+            if isinstance(value, bool):
+                value = 1 if value else 0
+            yield f'    {name}    {value}'
         yield self.suffix
+
+    def __str__(self):
+        return self.pk
