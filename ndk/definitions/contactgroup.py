@@ -9,6 +9,8 @@ class ContactGroupDirective(Construct):
 
     contactgroup_name = PrimaryKey()
     alias = StringField(required=True)
+    members = OneToMany('Contact')
+    contactgroup_members = OneToMany('ContactGroup')
 
     @property
     def pk(self):
