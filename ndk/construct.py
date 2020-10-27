@@ -44,7 +44,7 @@ class Construct(object):
                 if isinstance(value[0], Enum):
                     value = ','.join([v.value for v in value])
                 else:
-                    value = ','.join([v for v in value])
+                    value = ','.join([str(v) for v in value if v])
             yield f'    {name}    {value}'
         yield self.suffix
 

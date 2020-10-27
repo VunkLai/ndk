@@ -51,20 +51,20 @@ class ContactDirective(Construct):
 
     contact_name = PrimaryKey()
     alias = StringField()
-    contactgroups = ForeignKey('ContactGroup')
+    contactgroups = OneToMany('ContactGroup')
     minimum_importance = IntegerField()
     host_notifications_enabled = BooleanField(required=True)
     service_notifications_enabled = BooleanField(required=True)
-    host_notifications_period = ForeignKey(
+    host_notifications_period = OneToOne(
         'TimePeriod', required=True)
-    service_notifications_period = ForeignKey(
+    service_notifications_period = OneToOne(
         'TimePeriod', required=True)
     host_notifications_options = ChoiceField(
         HostNotifications, required=True)
     service_notifications_options = ChoiceField(
         ServiceNotifications, required=True)
-    host_notification_commands = ForeignKey('Command', required=True)
-    service_notification_commands = ForeignKey('Command', required=True)
+    host_notification_commands = OneToOne('Command', required=True)
+    service_notification_commands = OneToOne('Command', required=True)
     email = StringField()
     pager = StringField()
     addressx = StringField()

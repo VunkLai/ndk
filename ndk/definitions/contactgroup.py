@@ -8,6 +8,7 @@ class ContactGroupDirective(Construct):
     __object_type__ = 'contactgroup'
 
     contactgroup_name = PrimaryKey()
+    alias = StringField(required=True)
 
     @property
     def pk(self):

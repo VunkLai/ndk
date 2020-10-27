@@ -54,10 +54,12 @@ class ContactDirectiveTestCase(unittest.TestCase):
         contact = ContactDirective(self.stack, **self.requried_directive)
         assert contact.contactgroups is None
 
-        cg = ContactGroupDirective(self.stack, contactgroup_name='baz')
+        cg = ContactGroupDirective(
+            self.stack, contactgroup_name='baz', alias='cg')
         contact = ContactDirective(
-            self.stack, contactgroups=cg, **self.requried_directive)
-        assert isinstance(contact.contactgroups, ContactGroupDirective)
+            self.stack, contactgroups=[cg], **self.requried_directive)
+        assert isinstance(contact.contactgroups, list)
+        assert isinstance(contact.contactgroups[0], ContactGroupDirective)
 
     def test_minimum_importance(self):
         contact = ContactDirective(self.stack, **self.requried_directive)
@@ -153,13 +155,16 @@ class ContactDirectiveTestCase(unittest.TestCase):
         ]
 
     def test_synth(self):
-        cg = ContactGroupDirective(self.stack, contactgroup_name='baz')
+        cg1 = ContactGroupDirective(
+            self.stack, contactgroup_name='foo', alias='cg1')
+        cg2 = ContactGroupDirective(
+            self.stack, contactgroup_name='bar', alias='cg2')
         contact = ContactDirective(
-            self.stack, contactgroups=cg, **self.requried_directive)
+            self.stack, contactgroups=[cg1, cg2], **self.requried_directive)
         tmp = (
             'define contact {',
             '    contact_name    foo-bar',
-            '    contactgroups    baz',
+            '    contactgroups    foo,bar',
             '    host_notifications_enabled    1',
             '    service_notifications_enabled    1',
             '    host_notifications_period    24x7',

@@ -1,6 +1,7 @@
 import typing
 from importlib import import_module
 
+import attr
 from attr import converters
 from attr import ib as field
 from attr import validators
@@ -41,17 +42,54 @@ def BooleanField(required=False):
         type=bool, converter=Converters.BOOL, default=None, kw_only=True)
 
 
-def ForeignKey(relation, required=False):
-    module = import_module(f'ndk.definitions.{relation.lower()}')
-    cls = getattr(module, relation+'Directive')
+class ForeignKey:
+
+    def __init__(self, relation):
+        self.relation = relation
+
+    @property
+    def instance(self):
+        module = import_module(f'ndk.definitions.{self.relation.lower()}')
+        cls = getattr(module, self.relation+'Directive')
+        return cls
+
+    def member_validator(self, inst, attr, member):
+        if isinstance(member, self.instance):
+            return True
+        return False
+
+
+def OneToOne(relation, required=False):
+    fk = ForeignKey(relation)
     if required:
         return field(
-            type=cls,
-            validator=validators.instance_of(cls),
+            type=type,
+            validator=fk.member_validator,
             kw_only=True)
     return field(
-        type=cls,
-        validator=validators.optional(validators.instance_of(cls)),
+        type=type,
+        validator=validators.optional(fk.member_validator),
+        default=None,
+        kw_only=True)
+
+
+def OneToMany(relation, required=False):
+    fk = ForeignKey(relation)
+    if required:
+        return field(
+            type=typing.List[type],
+            validator=validators.deep_iterable(
+                member_validator=fk.member_validator,
+                iterable_validator=validators.instance_of(list),
+            ),
+            kw_only=True)
+    return field(
+        type=typing.List[type],
+        validator=validators.optional(
+            validators.deep_iterable(
+                member_validator=validators.optional(fk.member_validator),
+                iterable_validator=validators.instance_of(list),
+            )),
         default=None,
         kw_only=True)
 
