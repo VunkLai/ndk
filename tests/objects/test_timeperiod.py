@@ -1,37 +1,63 @@
 import unittest
 
-from ndk import core, objects
-from ndk.objects import (BusinessDay, TimePeriod, TimePeriodConstruct,
-                         TwentyFourSeven)
+import attr
+from ndk.objects import BusinessDay, TimePeriod, TwentyFourSeven
+from ndk.stack import Stack
 
 
 class TimePeriodTestCase(unittest.TestCase):
 
-    def test_L1_construct_is_works(self):
-        stack = core.Stack('TimePeriodTesting')
-        tp = TimePeriodConstruct(
-            stack, timeperiod_name='foo', alias='bar', sunday='00:00-24:00')
-        assert tp.pk == 'foo'
-        assert tp.alias == 'bar'
-        assert tp.sunday == '00:00-24:00'
+    def setUp(self):
+        self.stack = Stack('TimePeriodTesting')
 
-    def test_L2_construct_is_works(self):
-        stack = core.Stack('TimePeriodTesting')
+    def test_timeperiod(self):
+        tp = TimePeriod(self.stack, timeperiod_name='foo')
+        assert tp.pk == 'foo'
+        assert tp.timeperiod_name == 'foo'
+        assert tp.alias == 'foo'
+
+    def test_weekdays(self):
         tp = TimePeriod(
-            stack, timeperiod_name='foo', alias='bar', monday='00:00-24:00')
+            self.stack, timeperiod_name='foo', monday='00:00-24:00')
         assert tp.sunday is None
         assert tp.monday == '00:00-24:00'
 
-    def test_twenty_four_seven_is_works(self):
-        stack = core.Stack('TimePeriodTesting')
-        tp = TwentyFourSeven(stack)
-        assert tp.pk == '24x7'
-        assert tp.sunday == '00:00-24:00'
-        assert all([tp.sunday, tp.monday, tp.tuesday, tp.wednesday,
-                    tp.thursday, tp.friday, tp.saturday])
 
-        tp = BusinessDay(stack)
+class TwentyFourSevenTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.stack = Stack('TwentyFourSevenTesting')
+
+    def test_twenty_four_seven(self):
+        tp = TwentyFourSeven(self.stack)
+        assert tp.pk == '24x7'
+        assert tp.alias == '24 hours per day, seven days per week'
+        for day in [tp.sunday, tp.monday, tp.tuesday, tp.wednesday,
+                    tp.thursday, tp.friday, tp.saturday]:
+            with self.subTest(day=day):
+                assert day == '00:00-24:00'
+
+    def test_frozen(self):
+        tp = TwentyFourSeven(self.stack)
+        with self.assertRaises(attr.exceptions.FrozenInstanceError):
+            tp.timeperiod_name = 'foo'
+
+
+class BusinessDayTestCase(unittest.TestCase):
+
+    def setUp(self):
+        self.stack = Stack('BusinessDayTesting')
+
+    def test_business_day(self):
+        tp = BusinessDay(self.stack)
         assert tp.pk == '8x5'
-        assert tp.monday == '08:00-17:00'
-        assert all([tp.monday, tp.tuesday, tp.wednesday,
-                    tp.thursday, tp.friday])
+        assert tp.alias == '8 hours per day, from monday to friday'
+        for day in [
+                tp.monday, tp.tuesday, tp.wednesday, tp.thursday, tp.friday]:
+            with self.subTest(day=day):
+                assert day == '08:00-17:00'
+
+    def test_frozen(self):
+        tp = BusinessDay(self.stack)
+        with self.assertRaises(attr.exceptions.FrozenInstanceError):
+            tp.timeperiod_name = 'foo'
