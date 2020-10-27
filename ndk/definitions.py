@@ -49,13 +49,8 @@ def ForeignKey(relation, required=False):
         cls = getattr(module,  f'{relation}Directive')
 
     if required:
-        field(
-            type=cls, converter=cls.converter,
-            validator=attr.validators.instance_of(cls),
-            kw_only=True)
-    return field(type=cls, converter=cls.converter,
-                 validator=attr.validators.optional(
-                     attr.validators.instance_of(cls)),
+        return field(type=cls, converter=cls.converter, kw_only=True)
+    return field(type=cls, converter=converters.optional(cls.converter),
                  default=None, kw_only=True)
 
 

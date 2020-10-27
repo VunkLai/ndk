@@ -32,12 +32,7 @@ class Construct(object):
 
     @classmethod
     def converter(cls, obj):
-        if obj is None:
-            return None
-        elif isinstance(obj, cls):
-            return obj
-        else:
-            cls(obj)
+        return obj if isinstance(obj, cls) else cls(obj)
 
     def __iter__(self):
         yield self.prefix
