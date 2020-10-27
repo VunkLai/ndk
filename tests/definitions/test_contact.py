@@ -1,6 +1,7 @@
 import unittest
 
 from ndk.definitions import (CommandDirective, ContactDirective,
+                             HostNotifications, ServiceNotifications,
                              TimePeriodDirective)
 from ndk.stack import Stack
 
@@ -20,7 +21,9 @@ class ContactDirectiveTestCase(unittest.TestCase):
             host_notifications_period=self.tp,
             service_notifications_period=self.tp,
             host_notification_commands=self.cmd,
-            service_notification_commands=self.cmd
+            service_notification_commands=self.cmd,
+            host_notifications_options=HostNotifications.all(),
+            service_notifications_options=ServiceNotifications.empty(),
         )
 
     def test_contact_directive(self):
@@ -103,6 +106,42 @@ class ContactDirectiveTestCase(unittest.TestCase):
         with self.assertRaises(TypeError):
             ContactDirective(self.stack, **self.requried_directive)
 
+    def test_host_notifications_options(self):
+        contact = ContactDirective(self.stack, **self.requried_directive)
+        assert contact.host_notifications_options == HostNotifications.all()
+
+        self.requried_directive.pop('host_notifications_options')
+        with self.assertRaises(TypeError):
+            ContactDirective(self.stack, **self.requried_directive)
+
+        self.requried_directive['host_notifications_options'] = [
+            HostNotifications.DOWN,
+            HostNotifications.UNREACHABLE
+        ]
+        contact = ContactDirective(self.stack, **self.requried_directive)
+        assert contact.host_notifications_options == [
+            HostNotifications.DOWN,
+            HostNotifications.UNREACHABLE
+        ]
+
+    def test_service_notifications_options(self):
+        contact = ContactDirective(self.stack, **self.requried_directive)
+        assert ServiceNotifications.NO in contact.service_notifications_options
+
+        self.requried_directive.pop('service_notifications_options')
+        with self.assertRaises(TypeError):
+            ContactDirective(self.stack, **self.requried_directive)
+
+        self.requried_directive['service_notifications_options'] = [
+            ServiceNotifications.DOWN,
+            ServiceNotifications.FLAPPING
+        ]
+        contact = ContactDirective(self.stack, **self.requried_directive)
+        assert contact.service_notifications_options == [
+            HostNotifications.DOWN,
+            HostNotifications.FLAPPING
+        ]
+
     def test_synth(self):
         contact = ContactDirective(self.stack, **self.requried_directive)
         tmp = (
@@ -112,6 +151,8 @@ class ContactDirectiveTestCase(unittest.TestCase):
             '    service_notifications_enabled    1',
             '    host_notifications_period    24x7',
             '    service_notifications_period    24x7',
+            '    host_notifications_options    d,u,r,f,s',
+            '    service_notifications_options    n',
             '    host_notification_commands    email',
             '    service_notification_commands    email',
             '}')

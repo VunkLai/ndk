@@ -1,3 +1,5 @@
+from enum import Enum
+
 import attr
 
 from ndk.stack import Stack
@@ -42,6 +44,11 @@ class Construct(object):
                 continue
             if isinstance(value, bool):
                 value = 1 if value else 0
+            if isinstance(value, list):
+                if isinstance(value[0], Enum):
+                    value = ','.join([v.value for v in value])
+                else:
+                    value = ','.join([v for v in value])
             yield f'    {name}    {value}'
         yield self.suffix
 
