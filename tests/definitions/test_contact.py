@@ -1,8 +1,8 @@
 import unittest
 
 from ndk.definitions import (CommandDirective, ContactDirective,
-                             ContactGroupDirective, HostNotifications,
-                             ServiceNotifications, TimePeriodDirective)
+                             ContactGroupDirective, TimePeriodDirective)
+from ndk.options.contact import HostNotifications, ServiceNotifications
 from ndk.stack import Stack
 
 
@@ -145,13 +145,13 @@ class ContactDirectiveTestCase(unittest.TestCase):
             ContactDirective(self.stack, **self.requried_directive)
 
         self.requried_directive['service_notifications_options'] = [
-            ServiceNotifications.DOWN,
+            ServiceNotifications.WARNING,
             ServiceNotifications.FLAPPING
         ]
         contact = ContactDirective(self.stack, **self.requried_directive)
         assert contact.service_notifications_options == [
-            HostNotifications.DOWN,
-            HostNotifications.FLAPPING
+            ServiceNotifications.WARNING,
+            ServiceNotifications.FLAPPING
         ]
 
     def test_synth(self):
