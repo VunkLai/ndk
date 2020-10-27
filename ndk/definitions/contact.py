@@ -1,43 +1,9 @@
-import typing
+
 from enum import Enum
-from importlib import import_module
 
 import attr
-from attr import converters, validators
-
 from ndk.construct import Construct
 from ndk.directives import *
-
-
-@attr.s
-class CommandDirective(Construct):
-    __object_type__ = 'command'
-
-    command_name = PrimaryKey()
-    command_line = StringField(required=True)
-
-    @property
-    def pk(self):
-        return self.command_name
-
-
-@attr.s
-class TimePeriodDirective(Construct):
-    __object_type__ = 'timeperiod'
-
-    timeperiod_name = PrimaryKey()
-    alias = StringField(required=True)
-    sunday = StringField()
-    monday = StringField()
-    tuesday = StringField()
-    wednesday = StringField()
-    thursday = StringField()
-    friday = StringField()
-    saturday = StringField()
-
-    @property
-    def pk(self):
-        return self.timeperiod_name
 
 
 class HostNotifications(Enum):
@@ -77,13 +43,6 @@ class HostNotifications(Enum):
 
 
 ServiceNotifications = HostNotifications
-
-
-@attr.s
-class ContactGroupDirective(Construct):
-    __object_type__ = 'contactgroup'
-
-    contactgroup_name = PrimaryKey()
 
 
 @attr.s

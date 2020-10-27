@@ -32,10 +32,6 @@ class Construct(object):
     def synth(self):
         return "\n".join(self.__iter__())
 
-    @classmethod
-    def converter(cls, obj):
-        return obj if isinstance(obj, cls) else cls(obj)
-
     def __iter__(self):
         yield self.prefix
         # self.__dict__ has only attributes that created by attr.ib()

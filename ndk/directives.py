@@ -42,15 +42,18 @@ def BooleanField(required=False):
 
 
 def ForeignKey(relation, required=False):
-    cls = relation
-    if isinstance(relation, str):
-        module = import_module('.definitions', package='ndk')
-        cls = getattr(module, f'{relation}Directive')
-
+    module = import_module(f'ndk.definitions.{relation.lower()}')
+    cls = getattr(module, relation+'Directive')
     if required:
-        return field(type=cls, converter=cls.converter, kw_only=True)
-    return field(type=cls, converter=converters.optional(cls.converter),
-                 default=None, kw_only=True)
+        return field(
+            type=cls,
+            validator=validators.instance_of(cls),
+            kw_only=True)
+    return field(
+        type=cls,
+        validator=validators.optional(validators.instance_of(cls)),
+        default=None,
+        kw_only=True)
 
 
 def ChoiceField(items, required=False):

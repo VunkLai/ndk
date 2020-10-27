@@ -1,8 +1,8 @@
 import unittest
 
 from ndk.definitions import (CommandDirective, ContactDirective,
-                             HostNotifications, ServiceNotifications,
-                             TimePeriodDirective)
+                             ContactGroupDirective, HostNotifications,
+                             ServiceNotifications, TimePeriodDirective)
 from ndk.stack import Stack
 
 
@@ -16,6 +16,7 @@ class ContactDirectiveTestCase(unittest.TestCase):
             self.stack, command_name='email', command_line='bar')
         self.requried_directive = dict(
             contact_name='Foo Bar',
+            # contactgroups=self.cg,
             host_notifications_enabled=True,
             service_notifications_enabled=True,
             host_notifications_period=self.tp,
@@ -48,6 +49,15 @@ class ContactDirectiveTestCase(unittest.TestCase):
         contact = ContactDirective(
             self.stack, alias='Foo Bar', **self.requried_directive)
         assert contact.alias == 'Foo Bar'
+
+    def test_hostgroups(self):
+        contact = ContactDirective(self.stack, **self.requried_directive)
+        assert contact.contactgroups is None
+
+        cg = ContactGroupDirective(self.stack, contactgroup_name='baz')
+        contact = ContactDirective(
+            self.stack, contactgroups=cg, **self.requried_directive)
+        assert isinstance(contact.contactgroups, ContactGroupDirective)
 
     def test_minimum_importance(self):
         contact = ContactDirective(self.stack, **self.requried_directive)
@@ -143,10 +153,13 @@ class ContactDirectiveTestCase(unittest.TestCase):
         ]
 
     def test_synth(self):
-        contact = ContactDirective(self.stack, **self.requried_directive)
+        cg = ContactGroupDirective(self.stack, contactgroup_name='baz')
+        contact = ContactDirective(
+            self.stack, contactgroups=cg, **self.requried_directive)
         tmp = (
             'define contact {',
             '    contact_name    foo-bar',
+            '    contactgroups    baz',
             '    host_notifications_enabled    1',
             '    service_notifications_enabled    1',
             '    host_notifications_period    24x7',
