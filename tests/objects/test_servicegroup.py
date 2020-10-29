@@ -1,19 +1,20 @@
 import unittest
 
-from ndk import core, objects
-from ndk.objects import ServiceGroup, ServiceGroupConstruct
+from ndk.objects import ServiceGroup
+from ndk.stack import Stack
 
 
 class ServiceGroupTestCase(unittest.TestCase):
 
-    def test_L1_construct_is_works(self):
-        stack = core.Stack('ServiceGroupTesting')
-        cg = ServiceGroupConstruct(
-            stack, servicegroup_name='foo', alias='bar', members='baz')
-        assert cg.servicegroup_name == 'foo'
+    def setUp(self):
+        self.stack = Stack('ServiceGroupTesting')
 
-    def test_L2_construct_is_works(self):
-        stack = core.Stack('ServiceGroupTesting')
-        cg = ServiceGroup(stack, servicegroup_name='foo',
-                          alias='bar', members=['bar', 'baz'])
-        assert cg.members == ['bar', 'baz']
+    def test_contact_group(self):
+        cg = ServiceGroup(self.stack, servicegroup_name='Foo')
+        assert cg.pk == 'foo'
+        assert cg.alias == 'foo'
+
+    def test_alias(self):
+        cg = ServiceGroup(self.stack, servicegroup_name='foo', alias='bar')
+        assert cg.servicegroup_name == 'foo'
+        assert cg.alias == 'bar'
