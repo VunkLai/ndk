@@ -1,19 +1,20 @@
 import unittest
 
-from ndk import core, objects
-from ndk.objects import ContactGroup, ContactGroupConstruct
+from ndk.objects import ContactGroup
+from ndk.stack import Stack
 
 
 class ContactGroupTestCase(unittest.TestCase):
 
-    def test_L1_constructs_are_works(self):
-        stack = core.Stack('ContactGroupTesting')
-        cg = ContactGroupConstruct(
-            stack, contactgroup_name='foo', alias='bar', members='baz')
-        assert cg.contactgroup_name == 'foo'
+    def setUp(self):
+        self.stack = Stack('ContactGroupTesting')
 
-    def test_L2_constructs_are_works(self):
-        stack = core.Stack('ContactGroupTesting')
-        cg = ContactGroup(stack, contactgroup_name='foo',
-                          alias='bar', members=['bar', 'baz'])
-        assert cg.members == ['bar', 'baz']
+    def test_contact_group(self):
+        cg = ContactGroup(self.stack, contactgroup_name='Foo')
+        assert cg.pk == 'foo'
+        assert cg.alias == 'foo'
+
+    def test_alias(self):
+        cg = ContactGroup(self.stack, contactgroup_name='foo', alias='bar')
+        assert cg.contactgroup_name == 'foo'
+        assert cg.alias == 'bar'
